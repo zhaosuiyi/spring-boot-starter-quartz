@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yfs.springboot.quartz.mapper.TaskFireLogMapper">
+	<select id="selectIdByMap" resultType="java.lang.Long">
+		select id_ from task_fire_log
+		<where>
+			<!-- <if test="cm.keyword != null and cm.keyword != ''">
+				and (group_name like CONCAT('%',#{cm.keyword},'%') or task_name like CONCAT('%',#{cm.keyword},'%'))
+			</if> -->
+			<if test="cm.taskName != null and cm.taskName != ''">
+			    and task_name like CONCAT('%',#{cm.taskName},'%')
+			</if>
+			<if test="cm.taskGroup !=null and cm.taskGroup!= ''">
+			    and group_name like CONCAT('%',#{cm.taskGroup},'%')
+			</if>
+			<if test="cm.groupName !=null and cm.groupName!= ''">
+			    and group_name like CONCAT('%',#{cm.groupName},'%')
+			</if>
+		    <if test="cm.startTime !=null and cm.startTime !=''">
+			    and DATE_FORMAT(start_time,'%Y-%c-%d') &gt;= STR_TO_DATE(#{cm.startTime},'%Y-%c-%d')
+			</if>
+			<if test="cm.endTime !=null and cm.endTime !=''">
+			    and DATE_FORMAT(end_time,'%Y-%c-%d') &lt;= STR_TO_DATE(#{cm.endTime},'%Y-%c-%d')
+			</if>
+		</where>
+	</select>
+</mapper>

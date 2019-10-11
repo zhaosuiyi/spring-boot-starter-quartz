@@ -1,0 +1,7 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.yfs.springboot.quartz.QuartzAnnotationConfiguration,\
+com.yfs.springboot.quartz.config.YfsMybatisPlusConfiguration,\
+com.yfs.springboot.quartz.service.SchedulerService,\
+com.yfs.springboot.quartz.manager.SchedulerManager,\
+com.yfs.springboot.quartz.listener.TaskFireLogJobListener
+
