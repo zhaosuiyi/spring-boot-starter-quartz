@@ -30,25 +30,25 @@ public class QuartzAnnotationBeanPostProcessor implements BeanPostProcessor, App
     @Autowired
     private SchedulerManager schedulerManager;
 
-    @Value("${quartz.scheduler.instanceName:}")
+    //@Value("${quartz.scheduler.instanceName:}")
     private String quartzInstanceName;
 
-    @Value("${quartz.datasource.driver-class-name}")
+    //@Value("${quartz.datasource.driver-class-name}")
     private String myDSDriver;
 
-    @Value("${quartz.datasource.url}")
+    //@Value("${quartz.datasource.url}")
     private String myDSURL;
 
-    @Value("${quartz.datasource.username}")
+    //@Value("${quartz.datasource.username}")
     private String myDSUser;
 
-    @Value("${quartz.datasource.password}")
+    //@Value("${quartz.datasource.password}")
     private String myDSPassword;
 
-    @Value("${quartz.datasource.maxConnections:10}")
+    //@Value("${quartz.datasource.maxConnections:10}")
     private String myDSMaxConnections;
 
-    @Value("${quartz.cluster:false}")
+   // @Value("${quartz.cluster:false}")
     private boolean cluster;
 
     private List<String> triggers = new ArrayList<String>();

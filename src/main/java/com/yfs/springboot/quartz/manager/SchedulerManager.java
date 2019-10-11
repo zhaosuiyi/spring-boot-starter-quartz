@@ -123,6 +123,15 @@ public class SchedulerManager implements InitializingBean, ApplicationContextAwa
         return null;
     }
 
+    public Trigger getTriggerByTriggerKey(TriggerKey trigger) {
+        try {
+            return this.scheduler.getTrigger(trigger);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
     /**
      * 新增job
      * 
