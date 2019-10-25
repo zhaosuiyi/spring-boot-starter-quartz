@@ -26,15 +26,6 @@ public class SchedulerManager implements InitializingBean, ApplicationContextAwa
     @Autowired
     private Scheduler scheduler;
 
-    /*@PostConstruct
-    public void startScheduler() {
-        try {
-            scheduler.start();
-        } catch (SchedulerException e) {
-            e.printStackTrace();
-        }
-    }*/
-
     private List<JobListener> jobListeners;
 
     @Override

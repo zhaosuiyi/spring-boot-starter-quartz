@@ -66,7 +66,7 @@ public class YfsMybatisPlusConfiguration {
 
     @Bean(name = "quartzDataSource")
     @QuartzDataSource
-    @ConfigurationProperties(prefix = "quartz.datasource" )
+    @ConfigurationProperties(prefix = "spring.yfs.quartz.datasource" )
     public DataSource quartzDataSource() {
         return DruidDataSourceBuilder.create().build();
     }

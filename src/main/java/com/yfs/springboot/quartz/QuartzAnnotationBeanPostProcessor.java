@@ -9,6 +9,8 @@ import com.yfs.springboot.quartz.annotation.QuartzScheduled;
 import com.yfs.springboot.quartz.manager.SchedulerManager;
 import com.yfs.springboot.quartz.model.TaskScheduled;
 import org.quartz.Scheduler;
+import org.quartz.Trigger;
+import org.quartz.TriggerKey;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,10 +50,10 @@ public class QuartzAnnotationBeanPostProcessor implements BeanPostProcessor, App
     //@Value("${quartz.datasource.maxConnections:10}")
     private String myDSMaxConnections;
 
-   // @Value("${quartz.cluster:false}")
+    //@Value("${quartz.cluster:false}")
     private boolean cluster;
 
-    private List<String> triggers = new ArrayList<String>();
+    private List<Trigger> triggers = new ArrayList<Trigger>();
 
     private ConfigurableApplicationContext applicationContext;
 
@@ -75,6 +77,9 @@ public class QuartzAnnotationBeanPostProcessor implements BeanPostProcessor, App
             String jobBeanName = beanMethodName + "JobDetail";
             String triggerBeanName = beanMethodName + "Trigger";
 
+            jobBeanName=StringUtils.isEmpty(m.getAnnotation(QuartzScheduled.class).taskName())
+                    ?jobBeanName:m.getAnnotation(QuartzScheduled.class).taskName();
+
             TaskScheduled taskScheduled=new TaskScheduled();
             taskScheduled.setTaskName(jobBeanName);
             taskScheduled.setTaskGroup(m.getAnnotation(QuartzScheduled.class).taskGroup());
@@ -87,24 +92,9 @@ public class QuartzAnnotationBeanPostProcessor implements BeanPostProcessor, App
             taskScheduled.setTargetMethod(mname);
             schedulerManager.updateTask(taskScheduled);
 
-           /* BeanDefinitionBuilder jobDetailBuilder = BeanDefinitionBuilder.genericBeanDefinition(JobDetailFactoryBean.class);
-            jobDetailBuilder.addPropertyValue("durability", true);
-            jobDetailBuilder.addPropertyValue("jobClass", BaseJob.class);
-            Map<String, String> jobDataAsMap = new HashMap<>();
-            jobDataAsMap.put("targetObject", beanName);
-            jobDataAsMap.put("targetMethod", mname);
-            jobDataAsMap.put("taskType", TaskScheduled.TaskType.spring);
-            jobDetailBuilder.addPropertyValue("jobDataAsMap", jobDataAsMap);
-            defaultListableBeanFactory.registerBeanDefinition(jobBeanName, jobDetailBuilder.getBeanDefinition());
+            Trigger trigger= schedulerManager.getTriggerByTriggerKey(new TriggerKey(jobBeanName,taskScheduled.getTaskGroup()));
 
-            BeanDefinitionBuilder triggerBuilder = BeanDefinitionBuilder.genericBeanDefinition(CronTriggerFactoryBean.class);
-            JobDetail jobDetail = applicationContext.getBean(jobBeanName, JobDetail.class);
-            triggerBuilder.addPropertyValue("jobDetail", jobDetail);
-            triggerBuilder.addPropertyValue("cronExpression", m.getAnnotation(QuartzScheduled.class).value());
-            defaultListableBeanFactory.registerBeanDefinition(triggerBeanName, triggerBuilder.getBeanDefinition());
-*/
-            //triggers.add(applicationContext.getBean(jobBeanName, Trigger.class));
-            triggers.add(triggerBeanName);
+            triggers.add(trigger);
         });
         return bean;
     }
@@ -116,7 +106,7 @@ public class QuartzAnnotationBeanPostProcessor implements BeanPostProcessor, App
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         if (event.getApplicationContext() == this.applicationContext) {
-           // finishRegistration();
+            //finishRegistration();
         }
     }
 
@@ -135,17 +125,8 @@ public class QuartzAnnotationBeanPostProcessor implements BeanPostProcessor, App
             String beanName = "scheduledExecutorFactoryBean";
             defaultListableBeanFactory.registerBeanDefinition(beanName, builder.getBeanDefinition());
 
-           /* try {
-                Scheduler bean = applicationContext.getBean(beanName, Scheduler.class);
-                bean.start();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }*/
-
-        }else{
-            try {
-                String beanName = "scheduledExecutorFactoryBean";
-                applicationContext.getBean(beanName, Scheduler.class).start();
+           try {
+               applicationContext.getBean(beanName, Scheduler.class).start();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
